@@ -1,0 +1,292 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "name": "应用初始化任务",
+      "status": "completed",
+      "type": "app_init",
+      "subtasks": [
+        "初始化布局导航文件Layout",
+        "初始化主题文件",
+        "初始化占位页面和路由"
+      ],
+      "requirements": [],
+      "write_scope": [
+        "client/src/components/Layout.tsx",
+        "client/src/tailwind-theme.css",
+        "client/src/pages/**"
+      ],
+      "read_scope": [],
+      "acceptance": "项目基础布局、主题、占位路由初始化完成，可正常启动访问",
+      "dependencies": [],
+      "beginTime": 1783520603749,
+      "endTime": 1783520814034
+    },
+    {
+      "id": 2,
+      "name": "代码架构设计",
+      "status": "completed",
+      "type": "normal",
+      "subtasks": [
+        "读取 coding-guide、authz-guide、authn-guide 技能",
+        "规划前端页面目录：login、todo-list、todo-detail、users、settings 五个页面目录结构",
+        "统一设计路由与导航结构，确认 /login、/、/todo/:id、/users、/settings 路由配置，管理员专属路由添加权限控制",
+        "规划服务端业务模块边界：auth、todo、user、site-config 四个独立模块",
+        "规划 shared 目录前后端共享类型：用户、待办、附件、站点配置的接口定义",
+        "明确并行开发边界：各业务模块仅修改自身目录文件，避免修改全局共享文件",
+        "预填充 server/app.module.ts 模块注册、client/src/app.tsx 路由、client/src/api/index.ts 导出占位"
+      ],
+      "requirements": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "write_scope": [
+        "server/app.module.ts",
+        "client/src/app.tsx",
+        "client/src/api/index.ts",
+        "shared/api.interface.ts"
+      ],
+      "read_scope": [
+        ".agent/skills/steering/nestjs-react-fullstack/coding-guide/SKILL.md",
+        ".agent/skills/steering/nestjs-react-fullstack/authz-guide/SKILL.md",
+        ".agent/skills/steering/nestjs-react-fullstack/authn-guide/SKILL.md"
+      ],
+      "acceptance": "前后端目录结构、路由、模块边界、共享类型定义完成，各业务模块可并行开发",
+      "dependencies": [
+        1
+      ],
+      "beginTime": 1783520814197,
+      "endTime": 1783520953494
+    },
+    {
+      "id": 3,
+      "name": "数据库服务创建",
+      "status": "completed",
+      "type": "normal",
+      "subtasks": [
+        "读取 miaoda-sql 技能",
+        "创建用户表(user)，包含用户名、加密密码、状态、角色字段，预置管理员账号qhzd",
+        "创建待办表(todo)，包含标题、备注、截止时间、状态、创建人、负责人字段",
+        "创建待办附件表(todo_attachment)，关联待办ID和图片URL",
+        "创建站点配置表(site_config)，预置站点标题和副标题初始数据",
+        "编写 shared 目录中的数据库相关类型定义，前后端对齐",
+        "验证数据库表创建成功，预置数据插入正常"
+      ],
+      "requirements": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "write_scope": [
+        "server/database/schema.ts",
+        "shared/api.interface.ts"
+      ],
+      "read_scope": [
+        ".agent/skills/steering/nestjs-react-fullstack/miaoda-sql/SKILL.md",
+        "server/database/schema.ts"
+      ],
+      "acceptance": "四张业务表创建完成，预置数据正常，共享类型定义对齐",
+      "dependencies": [
+        2
+      ],
+      "beginTime": 1783520953658,
+      "endTime": 1783521138246
+    },
+    {
+      "id": 4,
+      "name": "登录认证模块开发（含前后端）",
+      "status": "completed",
+      "type": "normal",
+      "subtasks": [
+        "读取 authn-guide、user-management-best-practices 技能",
+        "实现服务端 AuthService：用户注册、登录、密码加密、状态校验逻辑",
+        "实现 AuthController：POST /api/auth/login、POST /api/auth/register 接口，添加 @NeedLogin 权限控制",
+        "配置登录注册页路由，检查Layout一致性",
+        "开发前端登录注册页面，包含表单验证、状态提示、登录/注册切换功能",
+        "集成前端用户认证能力，实现未登录跳转、登录态持久化、全局请求拦截器",
+        "代码级自查：前后端类型一致、接口入参出参符合定义、权限控制生效"
+      ],
+      "requirements": [
+        "1"
+      ],
+      "write_scope": [
+        "server/modules/auth/**",
+        "client/src/pages/login/**",
+        "client/src/api/auth.ts",
+        "shared/api.interface.ts"
+      ],
+      "read_scope": [
+        "shared/api.interface.ts",
+        "server/database/schema.ts"
+      ],
+      "acceptance": "用户注册后状态为待审核，管理员审批后可正常登录，登录态刷新不丢失，未登录用户自动跳转登录页",
+      "dependencies": [
+        2,
+        3
+      ],
+      "beginTime": 1783521138421,
+      "endTime": 1783522264576
+    },
+    {
+      "id": 5,
+      "name": "待办事项模块开发（含前后端）",
+      "status": "completed",
+      "type": "normal",
+      "subtasks": [
+        "读取 forms-skill、client-builtins-file-storage-service 技能",
+        "实现服务端 TodoService：待办CRUD、状态更新、附件管理、筛选查询逻辑，使用平台内置用户服务获取负责人列表",
+        "实现 TodoController：待办列表、新增、编辑、删除、状态更新、附件管理接口，添加 @NeedLogin 权限控制",
+        "配置待办列表页、详情页路由，检查Layout一致性",
+        "开发前端待办列表页：卡片式展示、状态筛选、负责人筛选、新增待办弹窗、快捷标记完成功能",
+        "开发前端待办详情页：信息展示、编辑、删除、附件上传/预览/删除、标记完成功能",
+        "集成文件上传能力，实现多图上传、进度反馈、大图查看功能",
+        "代码级自查：前后端类型一致、接口调用正常、权限控制生效（普通用户仅可删除自己创建的待办）"
+      ],
+      "requirements": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "write_scope": [
+        "server/modules/todo/**",
+        "client/src/pages/todo-list/**",
+        "client/src/pages/todo-detail/**",
+        "client/src/api/todo.ts",
+        "shared/api.interface.ts"
+      ],
+      "read_scope": [
+        "shared/api.interface.ts",
+        "server/database/schema.ts"
+      ],
+      "acceptance": "待办CRUD、多负责人分配、多图上传、状态筛选功能正常，移动端适配良好，操作后数据实时同步",
+      "dependencies": [
+        2,
+        3
+      ],
+      "beginTime": 1783521138421,
+      "endTime": 1783522264576
+    },
+    {
+      "id": 6,
+      "name": "人员管理模块开发（含前后端，管理员专属）",
+      "status": "completed",
+      "type": "normal",
+      "subtasks": [
+        "读取 authz-guide、table-skill 技能",
+        "实现服务端 UserService：用户列表查询、注册审批、用户增删改、角色调整逻辑",
+        "实现 UserController：待审核用户列表、全量用户列表、审批、新增用户、删除用户、角色修改接口，添加 @CanRole(['admin']) 权限控制",
+        "配置人员管理页路由，检查Layout一致性，添加管理员权限控制",
+        "开发前端人员管理页：待审核用户列表、全量用户表格、新增用户弹窗、审批/删除/角色调整功能",
+        "代码级自查：前后端类型一致、接口调用正常、仅管理员可访问该模块"
+      ],
+      "requirements": [
+        "7",
+        "8"
+      ],
+      "write_scope": [
+        "server/modules/user/**",
+        "client/src/pages/users/**",
+        "client/src/api/user.ts",
+        "shared/api.interface.ts"
+      ],
+      "read_scope": [
+        "shared/api.interface.ts",
+        "server/database/schema.ts"
+      ],
+      "acceptance": "管理员可审批新用户、增删改用户、调整角色，普通用户无法访问该模块，操作后数据实时同步",
+      "dependencies": [
+        2,
+        3
+      ],
+      "beginTime": 1783521138421,
+      "endTime": 1783522264576
+    },
+    {
+      "id": 7,
+      "name": "站点设置模块开发（含前后端，管理员专属）",
+      "status": "completed",
+      "type": "normal",
+      "subtasks": [
+        "读取 forms-skill 技能",
+        "实现服务端 SiteConfigService：站点配置查询、更新逻辑",
+        "实现 SiteConfigController：获取站点配置、更新站点配置接口，更新接口添加 @CanRole(['admin']) 权限控制",
+        "配置站点设置页路由，检查Layout一致性，添加管理员权限控制",
+        "开发前端站点设置页：标题/副标题编辑、实时预览、保存功能",
+        "实现全站站点标题同步：所有页面顶部自动加载最新站点配置",
+        "代码级自查：前后端类型一致、接口调用正常、仅管理员可访问该模块"
+      ],
+      "requirements": [
+        "9"
+      ],
+      "write_scope": [
+        "server/modules/site-config/**",
+        "client/src/pages/settings/**",
+        "client/src/api/site-config.ts",
+        "client/src/components/Layout.tsx",
+        "shared/api.interface.ts"
+      ],
+      "read_scope": [
+        "shared/api.interface.ts",
+        "server/database/schema.ts"
+      ],
+      "acceptance": "管理员可修改站点标题和副标题，保存后全站即时生效，普通用户无法访问该模块",
+      "dependencies": [
+        2,
+        3
+      ],
+      "beginTime": 1783521138421,
+      "endTime": 1783522264576
+    },
+    {
+      "id": 8,
+      "name": "验收测试",
+      "status": "completed",
+      "type": "normal",
+      "subtasks": [
+        "读取 testing-guide 技能",
+        "入口检查：登录页为默认入口，未登录自动跳转，登录后可进入待办列表页",
+        "核心验收目标1：用户注册登录流程 —— 新用户注册后状态为待审核，管理员审批后可正常登录，登录态刷新不丢失",
+        "核心验收目标2：待办核心流程 —— 可创建带多负责人、多附件的待办，支持状态筛选、标记完成、编辑删除，移动端操作流畅",
+        "核心验收目标3：管理员功能 —— 可审批用户、管理人员、修改站点配置，普通用户无法访问管理员模块",
+        "非核心降级范围：AI内容质量、复杂批量数据一致性、低风险视觉细节"
+      ],
+      "requirements": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "write_scope": [],
+      "read_scope": [],
+      "acceptance": "核心业务流程正常，所有需求点均实现，移动端适配良好",
+      "dependencies": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "beginTime": 1783522264748,
+      "endTime": 1783523360805
+    }
+  ]
+}
